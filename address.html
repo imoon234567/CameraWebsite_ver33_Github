@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Settings • Delivery Address</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Google Identity Services (use same as other pages) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <!-- Header / Navigation (same structure for consistency) -->
+  <header>
+    <nav class="Navigation_bar">
+      <a href="index.html" class="Navigation_Logo">
+        <img src="images/grell.webp" alt="Nikon Logo" width="50" height="50">
+      </a>
+
+      <div class="Navigation_Inner Section_content">
+        <ul class="Navigation_Menu">
+          <button id="Menu_Close_Button" class="fas fa-times"></button>
+
+          <li class="Navigation_Item Navigation_Search_Bar">
+            <form id="Navigation_Search_Form" role="search" action="#menu">
+              <input id="Navigation_Search_Input" class="Navigation_Search_Input" type="search" placeholder="Search menu..." aria-label="Search menu">
+              <button class="Navigation_Search_Button" type="submit" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+            </form>
+          </li>
+
+          <li class="Navigation_Item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="Navigation_Item"><a href="catalog.html" class="nav-link">Catalog</a></li>
+          <li class="Navigation_Item"><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+          <li class="Navigation_Item"><a href="index.html#contact" class="nav-link">Support</a></li>
+          <li class="Navigation_Item"><a href="cart.html" class="nav-link">My Cart</a></li>
+          <li class="Navigation_Item"><a href="#Account" class="nav-link" id="Open_Account">Account</a></li>
+        </ul>
+
+        <button id="Menu_Open_Button" class="fas fa-bars"></button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="Address_Section">
+      <div class="Section_content">
+        <h2 class="section-title">Delivery Address</h2>
+
+        <form id="Address_Form" class="Address_Form" autocomplete="on">
+          <div class="Address_Row">
+            <label class="Address_Label">First name
+              <input class="Address_Input" type="text" name="first_name" required />
+            </label>
+
+            <label class="Address_Label">Last name
+              <input class="Address_Input" type="text" name="last_name" required />
+            </label>
+          </div>
+
+          <label class="Address_Label">Address
+            <input class="Address_Input" type="text" name="addr_line" placeholder="Street address, house number" required />
+          </label>
+
+          <div class="Address_Row">
+            <label class="Address_Label">City
+              <input class="Address_Input" type="text" name="city" required />
+            </label>
+
+            <label class="Address_Label">Country
+              <input class="Address_Input" type="text" name="country" required />
+            </label>
+          </div>
+
+          <label class="Address_Label">Postal code
+            <input class="Address_Input" type="text" name="postal_code" required />
+          </label>
+
+          <p id="Address_Info" class="Address_Info" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky bottom bar with Save button -->
+  <div class="Sticky_Bar">
+    <div class="Section_content Sticky_Inner">
+      <button id="Save_Address" class="Save_Button" type="submit" form="Address_Form">
+        <i class="fa-solid fa-floppy-disk"></i>&nbsp; Save address
+      </button>
+      <span id="Save_Msg" class="Save_Msg"></span>
+    </div>
+  </div>
+
+  <!-- Auth Modal (same markup used elsewhere so the button keeps working) -->
+  <div id="Auth_Modal" class="auth-modal" aria-hidden="true">
+    <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" aria-label="Close">&times;</button>
+
+      <h3 id="authTitle" class="auth-title">Welcome</h3>
+
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Log in</button>
+        <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+      </div>
+
+      <form id="Login_Form" class="auth-panel" data-panel="login" autocomplete="on">
+        <label class="auth-label">Username or email
+          <input class="auth-input" type="text" name="username" required />
+        </label>
+        <label class="auth-label">Password
+          <input class="auth-input" type="password" name="password" required />
+        </label>
+        <button class="auth-submit" type="submit">Log in</button>
+        <p class="auth-msg" id="loginMsg" role="alert"></p>
+      </form>
+
+      <form id="Signup_Form" class="auth-panel is-hidden" data-panel="signup" autocomplete="on">
+        <label class="auth-label">Username
+          <input class="auth-input" type="text" name="username" required />
+        </label>
+        <label class="auth-label">Password
+          <input class="auth-input" type="password" name="password" minlength="6" required />
+        </label>
+        <button class="auth-submit" type="submit">Sign up</button>
+        <p class="auth-msg" id="signupMsg" role="alert"></p>
+      </form>
+
+      <div class="auth-or"><span>or</span></div>
+
+      <div id="g_id_onload"
+        data-client_id="REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID"
+        data-callback="handleCredentialResponse"
+        data-auto_prompt="false"></div>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="continue_with"
+        data-shape="rectangular"
+        data-logo_alignment="left"></div>
+    </div>
+  </div>
+
+  <!-- Helpers & DB hydration (ORDER MATTERS) -->
+  <script src="products.js?v=2"></script>
+  <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+  <script src="db-client.js?v=5"></script>
+  <script src="script.js?v=2"></script>
+
+  <!-- Page logic -->
+  <script>
+    (function(){
+      const API_BASE = (window.DB_API_BASE || 'api').replace(/\/$/, '');
+      const infoEl   = document.getElementById('Address_Info');
+      const saveMsg  = document.getElementById('Save_Msg');
+      const form     = document.getElementById('Address_Form');
+
+      // Require login
+      const currentUser = localStorage.getItem('currentUser') || '';
+      if (!currentUser) {
+        alert('Please log in to edit your address.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Prefill current username on the Account link at top
+      const accBtn = document.getElementById('Open_Account');
+      if (accBtn) accBtn.textContent = currentUser;
+
+      // Load existing address
+      async function loadAddress(){
+        try{
+          const url = `${API_BASE}/address_get.php?user=${encodeURIComponent(currentUser)}&_=${Date.now()}`;
+          const res = await fetch(url, { cache:'no-store' });
+          const json = await res.json();
+
+          if (!json.ok) throw new Error(json.error || 'Failed to load');
+          const row = json.data;
+
+          if (row) {
+            form.first_name.value  = row.first_name || '';
+            form.last_name.value   = row.last_name || '';
+            form.addr_line.value   = row.addr_line || '';
+            form.city.value        = row.city || '';
+            form.country.value     = row.country || '';
+            form.postal_code.value = row.postal_code || '';
+            infoEl.textContent     = `Last updated: ${new Date(row.updated_at).toLocaleString()}`;
+          } else {
+            infoEl.textContent = 'No address on file yet.';
+          }
+        }catch(e){
+          console.error(e);
+          infoEl.textContent = 'Could not load address.';
+        }
+      }
+
+      // Save handler
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const payload = {
+          user:        currentUser,
+          first_name:  form.first_name.value.trim(),
+          last_name:   form.last_name.value.trim(),
+          addr_line:   form.addr_line.value.trim(),
+          city:        form.city.value.trim(),
+          country:     form.country.value.trim(),
+          postal_code: form.postal_code.value.trim()
+        };
+
+        // Basic validation
+        for (const [k,v] of Object.entries(payload)) {
+          if (!v) { saveMsg.textContent = 'Please fill all fields.'; return; }
+        }
+
+        try{
+          const res = await fetch(`${API_BASE}/address_save.php`, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const json = await res.json();
+          if (!json.ok) throw new Error(json.error || 'Save failed');
+
+          saveMsg.style.color = '#1b7e1b';
+          saveMsg.textContent = 'Address saved!';
+          infoEl.textContent  = `Last updated: ${new Date().toLocaleString()}`;
+          setTimeout(() => { saveMsg.textContent = ''; }, 1500);
+        }catch(err){
+          console.error(err);
+          saveMsg.style.color = '#b90000';
+          saveMsg.textContent = 'Could not save address.';
+        }
+      });
+
+      // Kick off
+      loadAddress();
+    })();
+  </script>
+</body>
+</html>

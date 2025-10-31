@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Announcements • GreatestCameraLover</title>
+
+    <!-- Icons + site styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css"/>
+
+    <!-- Google Identity Services (for Account modal) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+      /* Optional helpers if your stylesheet doesn't already include these */
+      .policy-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.38); z-index:9999; }
+      .policy-modal.show { display:block; }
+      .policy-dialog { background:#fff; max-width:720px; margin:8vh auto; border-radius:14px; padding:24px; box-shadow:0 24px 48px rgba(0,0,0,.2); }
+      .policy-title { margin:0 0 12px; font-size:1.4rem; }
+      .policy-body p { line-height:1.6; margin:0 0 12px; }
+      .policy-body ul { padding-left:18px; margin:0 0 12px; }
+      .policy-close { margin-top:8px; display:inline-block; padding:.6rem 1rem; border-radius:10px; border:1px solid #ddd; background:#111; color:#fff; font-weight:700; }
+      .Announcement_Hero{ margin-top:var(--header-height); position:relative; color:#fff; padding:56px 0 68px; isolation:isolate; }
+      .Announcement_Hero::before{ content:""; position:absolute; inset:0; background-image:var(--bg); background-size:cover; background-position:center; z-index:-2; filter:saturate(108%); }
+      .Announcement_Hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.25)); z-index:-1; }
+      .Announcement_Title{ font-size:clamp(1.8rem,3vw,2.4rem); }
+      .Announcement_Subtitle{ color:#f2f2f2; margin-top:6px; }
+      .Announcement_Hero_Actions .button{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; background:var(--Epic-Yellow-color,#ffd34e); color:#111; font-weight:800; margin-right:8px; }
+      .Announcement_Hero_Actions .button.alt{ background:#fff; color:#111; }
+      .Announcement_Section{ padding:42px 0 80px; background:var(--light-pink-color,#faf5f7); }
+      .Announcement_Section.alt{ background:#fff; }
+      .Announcement_Grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
+      .Announcement_Card{ background:#fff; border:1px solid #eee; border-radius:12px; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,.08); display:flex; flex-direction:column; }
+      .Announcement_Image{ width:100%; aspect-ratio:16/10; object-fit:cover; }
+      .Announcement_Body{ padding:14px 16px 18px; display:flex; flex-direction:column; gap:8px; }
+      .Announcement_Badges{ display:flex; gap:8px; flex-wrap:wrap; }
+      .Badge{ background:#111; color:#fff; border-radius:999px; padding:4px 10px; font-size:.8rem; }
+      .Badge.subtle{ background:#f1f1f1; color:#333; }
+      .Badge.accent{ background:var(--Epic-Yellow-color,#ffd34e); color:#111; }
+      .Announcement_Item_Title{ margin:4px 0; font-size:1.05rem; }
+      .Announcement_Meta{ color:#666; font-size:.92rem; }
+      .Announcement_Desc{ color:#444; font-size:.95rem; }
+      .Announcement_Link{ font-weight:800; color:var(--primary-color,#0d3b66); text-decoration:underline; }
+      body.no-scroll{ overflow:hidden; }
+
+      .Badge.accent{
+        border: 0 !important;
+        box-shadow: none !important;  /* covers designs that fake a border with shadow */
+      }
+      
+      /* If you still see a green ring when tabbing (focus outline), optionally disable it for these badges */
+      .Badge.accent:focus,
+      .Badge.accent:focus-visible,
+      .Badge.accent:active{
+        outline: none !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== Header / Navigation (same structure as other pages) ===== -->
+    <header>
+      <nav class="Navigation_bar">
+        <a href="index.html" class="Navigation_Logo">
+          <img src="images/grell.webp" alt="Site Logo" width="50" height="50">
+        </a>
+
+        <div class="Navigation_Inner Section_content">
+          <ul class="Navigation_Menu">
+            <button id="Menu_Close_Button" class="fas fa-times" aria-label="Close menu"></button>
+
+            <li class="Navigation_Item Navigation_Search_Bar">
+              <form id="Navigation_Search_Form" role="search" action="#menu">
+                <input id="Navigation_Search_Input" class="Navigation_Search_Input" type="search" placeholder="Search menu..." aria-label="Search menu">
+                <button class="Navigation_Search_Button" type="submit" aria-label="Search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </form>
+            </li>
+
+            <li class="Navigation_Item"><a href="index.html" class="nav-link">Home</a></li>
+            <li class="Navigation_Item"><a href="catalog.html" class="nav-link">Catalog</a></li>
+            <li class="Navigation_Item"><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+            <li class="Navigation_Item"><a href="index.html#contact" class="nav-link">Support</a></li>
+            <li class="Navigation_Item"><a href="cart.html" class="nav-link">My Cart</a></li>
+            <li class="Navigation_Item"><a href="#Account" class="nav-link" id="Open_Account">Account</a></li>
+          </ul>
+
+          <button id="Menu_Open_Button" class="fas fa-bars" aria-label="Open menu"></button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ===== Hero ===== -->
+      <section class="Announcement_Hero" style="--bg:url('images/announcement.jpeg')">
+        <div class="Section_content">
+          <div class="Announcement_Hero_Inner">
+            <h1 class="Announcement_Title">Announcements</h1>
+            <p class="Announcement_Subtitle">Events, photo walks, and travel trips for camera lovers</p>
+            <div class="Announcement_Hero_Actions">
+              <a href="#events" class="button Announcement_CTA"><i class="fa-solid fa-bullhorn"></i>&nbsp; Upcoming Events</a>
+              <a href="#trips" class="button Announcement_CTA alt"><i class="fa-solid fa-route"></i>&nbsp; Travel Trips</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Events ===== -->
+      <section id="events" class="Announcement_Section">
+        <h2 class="section-title">Upcoming Events</h2>
+        <div class="Section_content">
+          <ul class="Announcement_Grid">
+            <!-- Card 1 -->
+            <li class="Announcement_Card">
+              <img src="images/Epic_hold_camera_1.jpg" alt="Hands-on Mirrorless Basics" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge">Workshop</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; Mar 22</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Hands-on Mirrorless Basics</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; VMES707 • ABAC</p>
+                <p class="Announcement_Desc">
+                  A beginner-friendly session covering exposure, focus modes, and lens choices—bring your camera!
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="event1">Learn more</a>
+                </div>
+              </div>
+            </li>
+
+            <!-- Card 2 -->
+            <li class="Announcement_Card">
+              <img src="images/street_portrait.jpg" alt="Street Portrait Challenge" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge">Photo Walk</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; Apr 6</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Street Portrait Challenge</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; VMES708 • ABAC</p>
+                <p class="Announcement_Desc">
+                  Practice candid portraits with natural light and reflectors. Friendly coaching on posing and approach.
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="event2">Learn more</a>
+                </div>
+              </div>
+            </li>
+
+            <!-- Card 3 -->
+            <li class="Announcement_Card">
+              <img src="images/color_edit2.webp" alt="Lightroom & Color Workshop" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge">Meetup</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; Apr 28</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Lightroom & Color Workshop</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; VMES709 • ABAC</p>
+                <p class="Announcement_Desc">
+                  Learn a fast post-processing workflow: culling, basic corrections, color grading, and export recipes.
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="event3">Learn more</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== Travel Trips ===== -->
+      <section id="trips" class="Announcement_Section alt">
+        <h2 class="section-title">Travel Trips for Photography</h2>
+        <div class="Section_content">
+          <ul class="Announcement_Grid">
+            <!-- Trip 1 -->
+            <li class="Announcement_Card">
+              <img src="images/camper.jpg" alt="Travel across America with campervan" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge accent">Trip</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; May 11–12</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Travel across America with campervan</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; Seaside & Clifftops</p>
+                <p class="Announcement_Desc">
+                  1 Month trip: relax in nature, cook together, and capture epic landscapes.
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="trip1">Itinerary</a>
+                </div>
+              </div>
+            </li>
+
+            <!-- Trip 2 -->
+            <li class="Announcement_Card">
+              <img src="images/YellowStone_national_park.jpg" alt="Yellowstone national park trip" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge accent">Trip</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; Jun 1</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Yellowstone national park trip</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; Wyoming • Montana • Idaho</p>
+                <p class="Announcement_Desc">
+                  7-day deep dive into geysers, wildlife (from a safe distance), and wide-angle vistas.
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="trip2">Itinerary</a>
+                </div>
+              </div>
+            </li>
+
+            <!-- Trip 3 -->
+            <li class="Announcement_Card">
+              <img src="images/Antarctic_trip.jpg" alt="Antarctic cruise" class="Announcement_Image">
+              <div class="Announcement_Body">
+                <div class="Announcement_Badges">
+                  <span class="Badge accent">Trip</span>
+                  <span class="Badge subtle"><i class="fa-regular fa-calendar"></i>&nbsp; Jun 22–23</span>
+                </div>
+                <h3 class="Announcement_Item_Title">Antarctic cruise</h3>
+                <p class="Announcement_Meta"><i class="fa-solid fa-location-dot"></i>&nbsp; Antarctic</p>
+                <p class="Announcement_Desc">
+                  Explore icebergs and penguin colonies responsibly with expert guides and ethical wildlife practices.
+                </p>
+                <div class="Announcement_Actions">
+                  <a href="#" class="Announcement_Link" data-info="trip3">Itinerary</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="Footer_Section">
+      <div class="Section_content">
+        <p class="copyright-text">@ 2025 GreatestCameraLover</p>
+        <div class="Social_Link_List">
+          <a href="#" class="Social_Link"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" class="Social_Link"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="Social_Link"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+        <p class="policy-text">
+          <a href="#" class="policy-link" data-policy="privacy">Privacy policy</a>
+          <span class="separator">.</span>
+          <a href="#" class="policy-link" data-policy="refund">Refund policy</a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- ===== Auth Modal ===== -->
+    <div id="Auth_Modal" class="auth-modal" aria-hidden="true">
+      <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <button class="auth-close" aria-label="Close">&times;</button>
+        <h3 id="authTitle" class="auth-title">Welcome</h3>
+
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Log in</button>
+          <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+        </div>
+
+        <form id="Login_Form" class="auth-panel" data-panel="login" autocomplete="on">
+          <label class="auth-label">Username or email
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" required />
+          </label>
+          <button class="auth-submit" type="submit">Log in</button>
+          <p class="auth-msg" id="loginMsg" role="alert"></p>
+        </form>
+
+        <form id="Signup_Form" class="auth-panel is-hidden" data-panel="signup" autocomplete="on">
+          <label class="auth-label">Username
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" minlength="6" required />
+          </label>
+          <button class="auth-submit" type="submit">Sign up</button>
+          <p class="auth-msg" id="signupMsg" role="alert"></p>
+        </form>
+
+        <div class="auth-or"><span>or</span></div>
+
+        <div id="g_id_onload"
+          data-client_id="REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID"
+          data-callback="handleCredentialResponse"
+          data-auto_prompt="false"></div>
+        <div class="g_id_signin"
+          data-type="standard"
+          data-size="large"
+          data-theme="outline"
+          data-text="continue_with"
+          data-shape="rectangular"
+          data-logo_alignment="left"></div>
+      </div>
+    </div>
+
+    <!-- ===== Policy Modal (shared) ===== -->
+    <div id="Policy_Modal" class="policy-modal" aria-hidden="true">
+      <div class="policy-dialog" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+        <h3 id="policyTitle" class="policy-title">Policy</h3>
+        <div id="policyBody" class="policy-body"></div>
+        <button id="Policy_Close" class="policy-close" type="button" aria-label="Close policy dialog">Close</button>
+      </div>
+    </div>
+
+    <!-- ===== Helpers & site scripts (ORDER MATTERS) ===== -->
+    <script src="products.js?v=2"></script>
+    <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+    <script src="db-client.js?v=5"></script>
+    <script src="script.js?v=2"></script>
+
+    <!-- ===== Announcement modal wiring ===== -->
+    <script>
+      (function(){
+        // Content for each info modal
+        const CONTENT = {
+          event1: {
+            title: "Hands-on Mirrorless Basics — Details",
+            html: `
+              <p><strong>Date/Time:</strong> Mar 22, 10:00–13:00 • <strong>Venue:</strong> VMES707, ABAC</p>
+              <p><strong>What you'll learn:</strong> Exposure triangle, autofocus modes, practical lens selection, and quick setup tips for common scenes.</p>
+              <ul>
+                <li><strong>Bring:</strong> Your camera + charged battery + memory card.</li>
+                <li><strong>Skill level:</strong> Beginner friendly (all brands welcome).</li>
+                <li><strong>Perks:</strong> Take-home cheat sheet PDF & practice checklist.</li>
+              </ul>
+              <p><em>Heads-up:</em> Limited seating. If you can’t attend, please cancel 24h in advance so someone else can join.</p>
+            `
+          },
+          event2: {
+            title: "Street Portrait Challenge — Details",
+            html: `
+              <p><strong>Date/Time:</strong> Apr 6, 16:00–19:00 • <strong>Meet:</strong> VMES708, ABAC</p>
+              <p><strong>Focus:</strong> Approaching subjects respectfully, posing prompts, shooting with natural light + simple reflectors.</p>
+              <ul>
+                <li><strong>Bring:</strong> 35–85mm lens, comfortable shoes, small reflector (optional).</li>
+                <li><strong>Safety & Ethics:</strong> Always request permission and respect privacy and local laws.</li>
+                <li><strong>Deliverable:</strong> 5 edited portraits for group critique.</li>
+              </ul>
+            `
+          },
+          event3: {
+            title: "Lightroom & Color Workshop — Details",
+            html: `
+              <p><strong>Date/Time:</strong> Apr 28, 13:30–16:30 • <strong>Venue:</strong> VMES709, ABAC</p>
+              <p><strong>Workflow:</strong> Import & culling, basic corrections, HSL & color grading, calibration tricks, export presets.</p>
+              <ul>
+                <li><strong>Bring:</strong> Laptop with Lightroom (trial ok) and 10 RAWs to practice.</li>
+                <li><strong>Includes:</strong> Starter preset pack & keyboard shortcut sheet.</li>
+              </ul>
+            `
+          },
+          trip1: {
+            title: "Campervan Across America — Itinerary",
+            html: `
+              <p><strong>Duration:</strong> ~1 month • <strong>Style:</strong> Road-trip + campsites</p>
+              <ul>
+                <li><strong>Route highlights:</strong> Pacific Coast sunsets, desert night skies, mountain passes.</li>
+                <li><strong>Shoots:</strong> Golden-hour seascapes, astro sessions, roadside Americana.</li>
+                <li><strong>Included:</strong> Campervan, fuel share plan, basic meals on cook nights.</li>
+                <li><strong>Not included:</strong> Park fees, personal snacks, optional excursions.</li>
+                <li><strong>Gear tips:</strong> Wide-angle + telephoto, ND filters, sturdy tripod.</li>
+              </ul>
+              <p><em>Note:</em> Campsite quiet hours and Leave No Trace principles apply.</p>
+            `
+          },
+          trip2: {
+            title: "Yellowstone National Park — 7-Day Plan",
+            html: `
+              <p><strong>Base:</strong> Rotating lodges/camps inside or near park • <strong>Focus:</strong> Geysers, canyons, wildlife (from safe distances).</p>
+              <ul>
+                <li><strong>Day 1–2:</strong> Old Faithful & Upper Geyser Basin sunrise/steam shots.</li>
+                <li><strong>Day 3–4:</strong> Grand Prismatic overlook, Lamar Valley wildlife (long lenses).</li>
+                <li><strong>Day 5:</strong> Grand Canyon of the Yellowstone (waterfall compositions).</li>
+                <li><strong>Day 6–7:</strong> Flexible weather/backup shoots + editing review.</li>
+                <li><strong>Safety:</strong> Obey boardwalks; never approach animals; follow ranger guidance.</li>
+              </ul>
+            `
+          },
+          trip3: {
+            title: "Antarctic Cruise — Photo-First Overview",
+            html: `
+              <p><strong>Style:</strong> Expedition cruise with daily Zodiac landings (weather permitting).</p>
+              <ul>
+                <li><strong>Subjects:</strong> Icebergs, penguin colonies, seabirds, dramatic ice light.</li>
+                <li><strong>Ethics:</strong> Strict wildlife distance rules; no feeding or disturbing animals.</li>
+                <li><strong>Gear:</strong> Weather-sealed camera, telephoto 200–400mm, dry bags.</li>
+                <li><strong>Workshops onboard:</strong> Exposure for snow/ice, white balance, and composition in harsh light.</li>
+              </ul>
+              <p><em>Note:</em> Landings depend on sea/ice conditions. Flexibility required.</p>
+            `
+          }
+        };
+
+        // Modal elements (reuses your Policy_Modal)
+        const modal = document.getElementById('Policy_Modal');
+        const dialog = modal?.querySelector('.policy-dialog');
+        const titleEl = document.getElementById('policyTitle');
+        const bodyEl  = document.getElementById('policyBody');
+        const closeBtn= document.getElementById('Policy_Close');
+
+        function openModal(title, html){
+          if (!modal) return;
+          titleEl.textContent = title || 'Info';
+          bodyEl.innerHTML = html || '<p>No details available.</p>';
+          modal.classList.add('show');
+          modal.setAttribute('aria-hidden','false');
+          document.body.classList.add('no-scroll');
+          // Focus the close button for accessibility
+          setTimeout(()=> closeBtn?.focus(), 0);
+        }
+        function closeModal(){
+          modal.classList.remove('show');
+          modal.setAttribute('aria-hidden','true');
+          document.body.classList.remove('no-scroll');
+        }
+
+        // Only close via the button
+        closeBtn?.addEventListener('click', closeModal);
+        // Block overlay clicks from closing
+        modal?.addEventListener('click', (e)=>{
+          if (!dialog.contains(e.target)) {
+            // prevent accidental close; do nothing
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+        // Disable ESC close
+        document.addEventListener('keydown', (e)=>{
+          if (modal?.classList.contains('show') && e.key === 'Escape'){
+            e.preventDefault();
+          }
+        });
+
+        // Intercept info links
+        document.addEventListener('click', (e)=>{
+          const link = e.target.closest('.Announcement_Link[data-info]');
+          if (!link) return;
+          e.preventDefault();
+          const key = link.getAttribute('data-info');
+          const item = CONTENT[key];
+          if (item) openModal(item.title, item.html);
+        });
+
+        // Basic mobile nav overlay handling (if not already in script.js)
+        (function(){
+          const openBtn  = document.getElementById('Menu_Open_Button');
+          const closeBtn = document.getElementById('Menu_Close_Button');
+          openBtn && openBtn.addEventListener('click', () => document.body.classList.add('show-mobile-menu'));
+          closeBtn && closeBtn.addEventListener('click', () => document.body.classList.remove('show-mobile-menu'));
+        })();
+      })();
+    </script>
+  </body>
+</html>

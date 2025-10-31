@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Best Camera shopping</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <!-- Header / Navigation -->
+    <header>
+      <nav class="Navigation_bar">
+        <a href="#" class="Navigation_Logo">
+          <img src="images/grell.webp" alt="Nikon Logo" width="50" height="50">
+        </a>
+
+        <div class="Navigation_Inner Section_content">
+          <ul class="Navigation_Menu">
+            <button id="Menu_Close_Button" class="fas fa-times"></button>
+
+            <li class="Navigation_Item Navigation_Search_Bar">
+              <form id="Navigation_Search_Form" role="search" action="#menu">
+                <input id="Navigation_Search_Input" class="Navigation_Search_Input" type="search" placeholder="Search menu..." aria-label="Search menu">
+                <button class="Navigation_Search_Button" type="submit" aria-label="Search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </form>
+            </li>
+
+            <li class="Navigation_Item"><a href="#" class="nav-link">Home</a></li>
+            <li class="Navigation_Item"><a href="catalog.html" class="nav-link">Catalog</a></li>
+            <li class="Navigation_Item"><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+            <li class="Navigation_Item"><a href="#contact" class="nav-link">Support</a></li>
+            <li class="Navigation_Item"><a href="cart.html" class="nav-link">My Cart</a></li>
+            <li class="Navigation_Item"><a href="#Account" class="nav-link" id="Open_Account">Account</a></li>
+          </ul>
+
+          <button id="Menu_Open_Button" class="fas fa-bars"></button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ================= First Page(Swipeable image and text) ================= -->
+      <section class="First_Page_Section">
+        <div class="First_Page_Swiper swiper">
+          <div class="Swiper_Wrapper swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="Swiper_Slide swiper-slide First_Page_Slide" style="--bg:url('images/Superman_poster.jpeg')">
+              <div class="Section_Content First_Page_Content">
+                <div class="First_Page_Details">
+                  <h2 class="title">CAPTURE WITH RED-V-RAPTOR</h2>
+                  <h3 class="subtitle">Superman 2025</h3>
+                  <p class="description">Release date: July 11, 2025</p>
+                  <div class="buttons">
+                    <a href="announcement.html" class="button order-now">See announcements</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="Swiper_Slide swiper-slide First_Page_Slide" style="--bg:url('images/Interstellar_poster.jpg')">
+              <div class="Section_Content First_Page_Content">
+                <div class="First_Page_Details">
+                  <h2 class="title">CAPTURE WITH IMAX MSM 9802</h2>
+                  <h3 class="subtitle">Interstellar 2014</h3>
+                  <p class="description">Release date: November 6, 2014</p>
+                  <div class="buttons">
+                    <a href="announcement.html" class="button order-now">See announcements</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="Swiper_Slide swiper-slide First_Page_Slide" style="--bg:url('images/Guardian_of_the_galaxy_poster.jpg')">
+              <div class="Section_Content First_Page_Content">
+                <div class="First_Page_Details">
+                  <h2 class="title">CAPTURE WITH RED V-RAPTOR</h2>
+                  <h3 class="subtitle">Guardian of the galaxy vol.3</h3>
+                  <p class="description">Release date: May 3, 2023</p>
+                  <div class="buttons">
+                    <a href="announcement.html" class="button order-now">See announcements</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="Swiper_Slide swiper-slide First_Page_Slide" style="--bg:url('images/Spiderman_vs_Electro.jpg')">
+              <div class="Section_Content First_Page_Content">
+                <div class="First_Page_Details">
+                  <h2 class="title">CAPTURE WITH SONY VENICE 2</h2>
+                  <h3 class="subtitle">The Amazing Spideman 2012</h3>
+                  <p class="description">Release date: June 29, 2012</p>
+                  <div class="buttons">
+                    <a href="announcement.html" class="button order-now">See announcements</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- controls -->
+          <div class="First_Page_Pagination swiper-pagination"></div>
+          <div class="First_Page_Previous swiper-button-prev"></div>
+          <div class="First_Page_Next swiper-button-next"></div>
+        </div>
+      </section>
+
+      <!-- ================= Epic Logo Bar ================= -->
+      <section class="Epic_logo_bar" aria-label="Camera brands">
+        <div class="Section_content">
+          <ul class="Epic_logo_list">
+            <li><a class="brand" href="#">Nikon</a></li>
+            <li><a class="brand" href="#">Canon</a></li>
+            <li><a class="brand" href="#">Sony</a></li>
+            <li><a class="brand" href="#">Fujifilm</a></li>
+            <li><a class="brand" href="#">Panasonic</a></li>
+            <li><a class="brand" href="#">OM System</a></li>
+            <li><a class="brand" href="#">Leica</a></li>
+            <li><a class="brand" href="#">Sigma</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= Second Page(Camera showcase) =================-->
+      <section class="Fifth_Page_Section" id="gallery">
+        <h2 class="section-title">Newly Arrived</h2>
+        <div class="Section_content">
+          <ul class="Fifth_Page_List">
+            <li class="Fifth_Page_Item">
+              <img src="images/Nikon_Camera_4.jpg" class="Fifth_Page_Image" alt="Nikon Z series" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">Nikon Z Series Body</h3>
+                <p class="text">Full-frame mirrorless with strong low-light performance and compact build.</p>
+              </div>
+            </li>
+
+            <li class="Fifth_Page_Item">
+              <img src="images/Sony_A7IV.jpg" class="Fifth_Page_Image" alt="Sony A7 IV" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">Sony A7 IV</h3>
+                <p class="text">Hybrid creator favorite—great autofocus and detailed 4K video.</p>
+              </div>
+            </li>
+
+            <li class="Fifth_Page_Item">
+              <img src="images/Fuji_X100VI_2.webp" class="Fifth_Page_Image" alt="Fujifilm X100VI" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">Fujifilm X100VI</h3>
+                <p class="text">Beloved street camera with classic styling and crisp fixed lens.</p>
+              </div>
+            </li>
+
+            <li class="Fifth_Page_Item">
+              <img src="images/Nikon_Big_DSLR_1.jpg" class="Fifth_Page_Image" alt="Nikon Pro DSLR" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">Nikon Pro DSLR</h3>
+                <p class="text">Rugged DSLR body designed for reliability and long shoots.</p>
+              </div>
+            </li>
+
+            <li class="Fifth_Page_Item">
+              <img src="images/Zoom_M3.webp" class="Fifth_Page_Image" alt="Nikon Pro DSLR" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">ZOOM M3</h3>
+                <p class="text">Versatile camera microphone</p>
+              </div>
+            </li>
+
+            <li class="Fifth_Page_Item">
+              <img src="images/Canon_EOS_1500D.png" class="Fifth_Page_Image" alt="Nikon Pro DSLR" />
+              <div class="Fifth_Page_Details">
+                <h3 class="name">Canon EOS 1500D</h3>
+                <p class="text">Bang for the buck!!!</p>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= Sixth page (Contact) ================= -->
+      <section class="Sixth_Page_Section" id="contact">
+        <h2 class="section-title">Customer Support</h2>
+        <div class="Section_content">
+          <ul class="Contact_Information_List">
+            <li class="Contact_Information"><i class="fa-solid fa-location-crosshairs"></i><p>Assumption University(ABAC)</p></li>
+            <li class="Contact_Information"><i class="fa-regular fa-envelope"></i><p>info@GreatestCameraLover.com</p></li>
+            <li class="Contact_Information"><i class="fa-solid fa-phone"></i><p>+1 202-456-7041</p></li>
+            <li class="Contact_Information"><i class="fa-regular fa-clock"></i><p>Monday - Friday: 9:00 AM - 5:00 PM</p></li>
+            <li class="Contact_Information"><i class="fa-regular fa-clock"></i><p>Saturday: 10:00 AM - 3:00 PM</p></li>
+            <li class="Contact_Information"><i class="fa-regular fa-clock"></i><p>Sunday: Closed</p></li>
+            <li class="Contact_Information"><i class="fa-solid fa-globe"></i><p>www.GreatestCameraLover.com</p></li>
+          </ul>
+
+          <form action="#" class="Contact_Form">
+            <input type="text" placeholder="Your name" class="form-input" required />
+            <input type="email" placeholder="Your email" class="form-input" required />
+            <textarea placeholder="Your message" class="form-input" required></textarea>
+            <button class="submit-button">Submit</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= Footer ================= -->
+      <footer class="Footer_Section">
+        <div class="Section_content">
+          <p class="copyright-text">@ 2025 GreatestCameraLover</p>
+          <div class="Social_Link_List">
+            <a href="#" class="Social_Link"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#" class="Social_Link"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="Social_Link"><i class="fa-brands fa-x-twitter"></i></a>
+          </div>
+          <p class="policy-text">
+            <a href="#" class="policy-link" data-policy="privacy">Privacy policy</a>
+            <span class="separator">.</span>
+            <a href="#" class="policy-link" data-policy="refund">Refund policy</a>
+          </p>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ===== Auth Modal (centered with blur) ===== -->
+    <div id="Auth_Modal" class="auth-modal" aria-hidden="true">
+      <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <button class="auth-close" aria-label="Close">&times;</button>
+
+        <h3 id="authTitle" class="auth-title">Welcome</h3>
+
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Log in</button>
+          <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+        </div>
+
+        <!-- Login -->
+        <form id="Login_Form" class="auth-panel" data-panel="login" autocomplete="on">
+          <label class="auth-label">Username or email
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" required />
+          </label>
+          <button class="auth-submit" type="submit">Log in</button>
+          <p class="auth-msg" id="loginMsg" role="alert"></p>
+        </form>
+
+        <!-- Signup -->
+        <form id="Signup_Form" class="auth-panel is-hidden" data-panel="signup" autocomplete="on">
+          <label class="auth-label">Username
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" minlength="6" required />
+          </label>
+          <button class="auth-submit" type="submit">Sign up</button>
+          <p class="auth-msg" id="signupMsg" role="alert"></p>
+        </form>
+
+        <div class="auth-or"><span>or</span></div>
+
+        <!-- Google Sign-In Button -->
+        <div id="g_id_onload"
+          data-client_id="REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID"
+          data-callback="handleCredentialResponse"
+          data-auto_prompt="false"></div>
+        <div class="g_id_signin"
+          data-type="standard"
+          data-size="large"
+          data-theme="outline"
+          data-text="continue_with"
+          data-shape="rectangular"
+          data-logo_alignment="left"></div>
+      </div>
+    </div>
+
+    <!-- ===== Policy Modal ===== -->
+    <div id="Policy_Modal" class="policy-modal" aria-hidden="true">
+      <div class="policy-dialog" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+        <h3 id="policyTitle" class="policy-title">Policy</h3>
+        <div id="policyBody" class="policy-body"></div>
+        <button id="Policy_Close" class="policy-close" type="button" aria-label="Close policy dialog">Close</button>
+      </div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Helpers & DB hydration (ORDER MATTERS) -->
+    <script src="products.js?v=2"></script>
+    <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+    <script src="db-client.js?v=5"></script>
+    <script src="script.js?v=2"></script>
+
+    <script>
+      (function(){
+        const API_BASE = (window.DB_API_BASE || 'api').replace(/\/$/, '');
+        const form = document.querySelector('.Contact_Form');
+        if (!form) return;
+
+        const nameEl = form.querySelector('input[type="text"]');
+        const emailEl = form.querySelector('input[type="email"]');
+        const msgEl = form.querySelector('textarea');
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const name = (nameEl.value || '').trim();
+          const email = (emailEl.value || '').trim();
+          const message = (msgEl.value || '').trim();
+
+          if (!name || !email || !message) {
+            alert('Please fill all fields.');
+            return;
+          }
+
+          try {
+            const res = await fetch(`${API_BASE}/support_submit.php`, {
+              method: 'POST',
+              headers: { 'Content-Type':'application/json' },
+              body: JSON.stringify({ name, email, message })
+            });
+            const json = await res.json();
+            if (!json.ok) throw new Error(json.error || 'Submit failed');
+
+            alert('Thanks! Your message has been sent.');
+            form.reset();
+          } catch (err) {
+            console.error(err);
+            alert('Sorry, we could not send your message.');
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

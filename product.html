@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product • GreatestCameraLover</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Helpers & DB hydration (ORDER MATTERS) -->
+   <script src="products.js?v=2"></script>
+   <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+   <script src="db-client.js?v=5"></script>
+   <script src="script.js?v=2"></script>
+
+
+
+  <!-- Tiny toast style so this page works even if style.css wasn’t updated -->
+  <style>
+    .Toast{
+      position:fixed; top:16px; left:50%;
+      transform:translateX(-50%) translateY(-12px);
+      z-index:60; background:var(--primary-color); color:#fff;
+      padding:10px 16px; border-radius:12px;
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+      opacity:0; pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+      font-weight:700;
+    }
+    .Toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="Product_Section">
+      <div class="Section_content">
+        <div class="Product_Wrapper">
+          <img id="prodImage" class="Product_Image" alt="">
+          <div>
+            <h1 id="prodTitle" class="Product_Title"></h1>
+            <div id="prodPrice" class="Product_Price"></div>
+            <p id="prodBlurb" class="Product_Desc"></p>
+
+            <div class="Product_Actions">
+              <button id="Add_To_Cart" class="Sort_Button" type="button">
+                <i class="fa-solid fa-cart-shopping"></i>&nbsp; Add to cart
+              </button>
+              <button id="Add_To_Wishlist" class="Sort_Option" type="button" aria-label="Add to wishlist">
+                <i class="fa-regular fa-heart"></i>&nbsp; Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:20px;">
+          <a href="catalog.html" class="nav-link" style="color:var(--secondary-color)">← Back to catalog</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast -->
+  <div id="Toast" class="Toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // --- Read URL params ---
+    const params = new URLSearchParams(location.search);
+    const qId   = params.get('id')   || '';
+    const qName = params.get('name') || '';
+    const qImg  = params.get('img')  || '';
+    const qDesc = params.get('desc') || '';
+    const qPrice= params.get('price');
+
+    // --- Try to get full product data from PRODUCTS (products.js) ---
+    let product = null;
+    if (typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS)) {
+      product = PRODUCTS.find(p => p.id === qId) || null;
+    }
+
+    const title = document.getElementById('prodTitle');
+    const img   = document.getElementById('prodImage');
+    const blurb = document.getElementById('prodBlurb');
+    const price = document.getElementById('prodPrice');
+
+    function parsePriceText(txt){
+      if (!txt) return null;
+      const n = Number(String(txt).replace(/[^\d.]/g,''));
+      return Number.isFinite(n) ? n : null;
+    }
+
+    // Fill the UI (initial)
+    if (product) {
+      title.textContent = product.name;
+      img.src = product.img;
+      img.alt = product.name;
+      blurb.textContent = product.blurb || '';
+      price.textContent = typeof formatPrice === 'function'
+        ? formatPrice(product.price)
+        : (product.price ? `$${product.price}` : '');
+    } else {
+      title.textContent = qName || 'Product';
+      img.src = qImg || 'images/placeholder.png';
+      img.alt = qName || 'Product image';
+      blurb.textContent = qDesc || '';
+      price.textContent = (qPrice && !isNaN(qPrice)) ? `$${qPrice}` : '';
+    }
+
+    // --- Toast helper ---
+    function showToast(msg){
+      const t = document.getElementById('Toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => t.classList.remove('show'), 1200);
+    }
+
+    // --- Cart helpers ---
+    function getCart(){ try { return JSON.parse(localStorage.getItem('cart')||'[]'); } catch { return []; } }
+    function setCart(c){ localStorage.setItem('cart', JSON.stringify(c)); }
+    function num(n){ const v = Number(n); return Number.isFinite(v) ? v : 0; }
+
+    // --- Wishlist helpers ---
+    function getWishlist(){ try { return JSON.parse(localStorage.getItem('wishlist')||'[]'); } catch { return []; } }
+    function setWishlist(w){ localStorage.setItem('wishlist', JSON.stringify(w)); }
+
+    // Build a normalized item object (prefer latest DB price)
+    function buildItem(){
+      const latestDB = (typeof window.__getLatestPriceById === 'function')
+
+      ? window.__getLatestPriceById(qId)
+      : null;
+
+      const unitPrice =
+      (latestDB != null ? Number(latestDB) : null) ??
+      (product && Number(product.price)) ??
+      parsePriceText(price.textContent) ??
+      (qPrice ? Number(qPrice) : null);
+
+      return {
+        id:    (product && product.id)    || qId || (title.textContent.trim().toLowerCase().replace(/\s+/g,'-')),
+        name:  (product && product.name)  || qName || title.textContent.trim(),
+        img:   (product && product.img)   || qImg  || 'images/placeholder.png',
+        price: unitPrice,
+        desc:  (product && product.blurb) || qDesc || '',
+        addedAt: Date.now()
+      };
+    }
+
+
+    // --- Add to cart (no redirect) ---
+    const addBtn = document.getElementById('Add_To_Cart');
+    addBtn?.addEventListener('click', () => {
+      const base = buildItem();
+      const item = { ...base, qty: 1 };
+
+      const cart = getCart();
+      const existing = cart.find(i => i.id === item.id);
+      if (existing) existing.qty = num(existing.qty) + 1;
+      else cart.push(item);
+      setCart(cart);
+
+      showToast('Item added to cart');
+      addBtn.disabled = true;
+      const old = addBtn.innerHTML;
+      addBtn.innerHTML = '<i class="fa-solid fa-check"></i>&nbsp; Added';
+      setTimeout(() => { addBtn.disabled = false; addBtn.innerHTML = old; }, 900);
+    });
+
+    // --- Wishlist toggle (add/remove) ---
+    const wishBtn = document.getElementById('Add_To_Wishlist');
+
+    function resolveId(){
+      return (product && product.id) || qId || (title.textContent.trim().toLowerCase().replace(/\s+/g,'-'));
+    }
+    function isInWishlist(id){
+      const wl = getWishlist();
+      return wl.some(x => x.id === id);
+    }
+    function updateWishlistButton(){
+      const id = resolveId();
+      const inList = isInWishlist(id);
+      if (inList){
+        wishBtn.innerHTML = '<i class="fa-solid fa-heart"></i>&nbsp; In wishlist';
+        wishBtn.disabled = false;
+      }else{
+        wishBtn.innerHTML = '<i class="fa-regular fa-heart"></i>&nbsp; Wishlist';
+        wishBtn.disabled = false;
+      }
+    }
+    updateWishlistButton();
+
+    wishBtn?.addEventListener('click', () => {
+      const wl = getWishlist();
+      const id = resolveId();
+      const idx = wl.findIndex(x => x.id === id);
+
+      if (idx === -1) {
+        wl.push(buildItem());
+        setWishlist(wl);
+        showToast('Added to wishlist');
+      } else {
+        wl.splice(idx, 1);
+        setWishlist(wl);
+        showToast('Item deleted');
+      }
+      updateWishlistButton();
+    });
+  </script>
+
+  <!-- site-wide behaviors last -->
+  <script src="script.js"></script>
+</body>
+</html>

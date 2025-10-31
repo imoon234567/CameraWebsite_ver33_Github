@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Wishlist • GreatestCameraLover</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <!-- Header / Navigation -->
+    <header>
+      <nav class="Navigation_bar">
+        <a href="index.html" class="Navigation_Logo">
+          <img src="images/grell.webp" alt="Nikon Logo" width="50" height="50">
+        </a>
+
+        <div class="Navigation_Inner Section_content">
+          <ul class="Navigation_Menu">
+            <button id="Menu_Close_Button" class="fas fa-times"></button>
+
+            <!-- Search bar (now visible) -->
+            <li class="Navigation_Item Navigation_Search_Bar">
+              <form id="Navigation_Search_Form" role="search">
+                <input id="Navigation_Search_Input" class="Navigation_Search_Input" type="search" placeholder="Search..." aria-label="Search">
+                <button class="Navigation_Search_Button" type="submit" aria-label="Search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </form>
+            </li>
+
+            <li class="Navigation_Item"><a href="index.html" class="nav-link">Home</a></li>
+            <li class="Navigation_Item"><a href="catalog.html" class="nav-link">Catalog</a></li>
+            <li class="Navigation_Item"><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+            <li class="Navigation_Item"><a href="index.html#contact" class="nav-link">Support</a></li>
+            <li class="Navigation_Item"><a href="cart.html" class="nav-link">My Cart</a></li>
+            <li class="Navigation_Item"><a href="#Account" class="nav-link" id="Open_Account">Account</a></li>
+          </ul>
+
+          <button id="Menu_Open_Button" class="fas fa-bars"></button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="Cart_Section">
+        <div class="Section_content">
+          <h2 class="section-title">My Wishlist</h2>
+
+          <ul id="Wish_List" class="Cart_List"></ul>
+
+          <div class="Cart_TotalBar">
+            <button id="Wish_Clear" class="Cart_Clear">Clear wishlist</button>
+            <button id="Wish_MoveAll" class="Cart_Clear" style="background:var(--Epic-Yellow-color); border-color:var(--Epic-Yellow-color); font-weight:700;">
+              <i class="fa-solid fa-cart-plus"></i> Move all to cart
+            </button>
+            <div id="Wish_Total" class="Cart_Total"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Auth Modal (same as index) ===== -->
+    <div id="Auth_Modal" class="auth-modal" aria-hidden="true">
+      <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <button class="auth-close" aria-label="Close">&times;</button>
+
+        <h3 id="authTitle" class="auth-title">Welcome</h3>
+
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Log in</button>
+          <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+        </div>
+
+        <form id="Login_Form" class="auth-panel" data-panel="login" autocomplete="on">
+          <label class="auth-label">Username or email
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" required />
+          </label>
+          <button class="auth-submit" type="submit">Log in</button>
+          <p class="auth-msg" id="loginMsg" role="alert"></p>
+        </form>
+
+        <form id="Signup_Form" class="auth-panel is-hidden" data-panel="signup" autocomplete="on">
+          <label class="auth-label">Username
+            <input class="auth-input" type="text" name="username" required />
+          </label>
+          <label class="auth-label">Password
+            <input class="auth-input" type="password" name="password" minlength="6" required />
+          </label>
+          <button class="auth-submit" type="submit">Sign up</button>
+          <p class="auth-msg" id="signupMsg" role="alert"></p>
+        </form>
+
+        <div class="auth-or"><span>or</span></div>
+
+        <div id="g_id_onload"
+          data-client_id="REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID"
+          data-callback="handleCredentialResponse"
+          data-auto_prompt="false"></div>
+        <div class="g_id_signin"
+          data-type="standard"
+          data-size="large"
+          data-theme="outline"
+          data-text="continue_with"
+          data-shape="rectangular"
+          data-logo_alignment="left"></div>
+      </div>
+    </div>
+
+    <!-- Helpers & DB hydration (ORDER MATTERS) -->
+     <script src="products.js?v=2"></script>
+     <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+     <script src="db-client.js?v=5"></script>
+     <script src="script.js?v=2"></script>
+
+    <!-- Wishlist page logic -->
+    <script>
+      // Storage helpers
+      function getWishlist(){ try { return JSON.parse(localStorage.getItem('wishlist') || '[]'); } catch { return []; } }
+      function setWishlist(w){ localStorage.setItem('wishlist', JSON.stringify(w)); }
+
+      function getCart(){ try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; } }
+      function setCart(c){ localStorage.setItem('cart', JSON.stringify(c)); }
+
+      function num(n){ const v = Number(n); return Number.isFinite(v) ? v : 0; }
+
+      // Render wishlist
+      function renderWishlist(){
+        const list = document.getElementById('Wish_List');
+        const totalEl = document.getElementById('Wish_Total');
+        const clearBtn = document.getElementById('Wish_Clear');
+        const moveAllBtn = document.getElementById('Wish_MoveAll');
+
+        // ensure prices from PRODUCTS if missing
+        let wl = getWishlist();
+        let touched = false;
+        if (Array.isArray(window.PRODUCTS)) {
+          wl.forEach(it => {
+            if (it.price == null) {
+              const found = window.PRODUCTS.find(p => p.id === it.id || p.name === it.name);
+              if (found && found.price != null) { it.price = Number(found.price); touched = true; }
+            }
+          });
+          if (touched) setWishlist(wl);
+        }
+
+        if (!wl.length){
+          list.innerHTML = `<li class="Cart_Empty">Your wishlist is empty.</li>`;
+          totalEl.textContent = '';
+          clearBtn.disabled = true;
+          moveAllBtn.disabled = true;
+          return;
+        }
+
+        clearBtn.disabled = false;
+        moveAllBtn.disabled = false;
+        list.innerHTML = '';
+        let total = 0;
+
+        wl.forEach(item => {
+          const unit = num(item.price);
+          total += unit;
+
+          const li = document.createElement('li');
+          li.className = 'Cart_Item';
+          li.innerHTML = `
+          <div class="Cart_Left">
+            <img class="Cart_Thumb" src="${item.img}" alt="${item.name}">
+            <div class="Cart_Info">
+              <h3 class="Cart_Title">${item.name}</h3>
+              <div class="Cart_Meta">Saved on ${new Date(item.addedAt||Date.now()).toLocaleDateString()}</div>
+              <div class="Cart_Controls">
+                <button class="add">Add to cart</button>
+                <button class="remove">Remove</button>
+              </div>
+            </div>
+          </div>
+          <div class="Cart_Right">
+            <div class="Cart_Price">${typeof formatPrice==='function' ? formatPrice(unit) : ('$'+unit)}</div>
+          </div>
+          `;
+          list.appendChild(li);
+
+          // Remove
+          li.querySelector('.remove').addEventListener('click', () => {
+            setWishlist(getWishlist().filter(x => x.id !== item.id));
+            renderWishlist();
+          });
+
+          // Add to cart (qty 1), then remove from wishlist
+          li.querySelector('.add').addEventListener('click', () => {
+            const cart = getCart();
+            const existing = cart.find(x => x.id === item.id);
+            if (existing) existing.qty = num(existing.qty) + 1;
+            else cart.push({ ...item, qty: 1 });
+            setCart(cart);
+
+            setWishlist(getWishlist().filter(x => x.id !== item.id));
+            renderWishlist();
+            alert('Moved to cart.');
+          });
+        });
+
+        totalEl.innerHTML = `<strong>Total value:</strong> ${typeof formatPrice==='function' ? formatPrice(total) : ('$'+total)}`;
+
+        // Move all to cart
+        moveAllBtn.onclick = () => {
+          const wlNow = getWishlist();
+          if (!wlNow.length) return;
+          const cart = getCart();
+          wlNow.forEach(item => {
+            const existing = cart.find(x => x.id === item.id);
+            if (existing) existing.qty = num(existing.qty) + 1;
+            else cart.push({ ...item, qty: 1 });
+          });
+          setCart(cart);
+          localStorage.removeItem('wishlist');
+          renderWishlist();
+          alert('All wishlist items moved to cart.');
+        };
+
+        // Clear wishlist
+        clearBtn.onclick = () => {
+          if (confirm('Clear all items from wishlist?')) {
+            localStorage.removeItem('wishlist');
+            renderWishlist();
+          }
+        };
+      }
+      document.addEventListener('DOMContentLoaded', renderWishlist);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accessories • GreatestCameraLover</title>
+
+  <!-- Icons + global styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Page-only styles -->
+  <style>
+    .Accessories_Hero{
+      margin-top: var(--header-height);
+      position: relative;
+      background: var(--primary-color);
+      color: #fff;
+      padding: 56px 0 68px;
+      isolation: isolate;
+    }
+    .Accessories_Hero::before{
+      content:""; position:absolute; inset:0;
+      background-image: var(--bg); background-size:cover; background-position:center;
+      z-index:-2; filter:saturate(108%); pointer-events:none;
+    }
+    .Accessories_Hero::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,.25));
+      z-index:-1; pointer-events:none;
+    }
+    .Accessories_Hero .title{ font-size: clamp(1.6rem, 3.2vw, 2.2rem); letter-spacing: .3px; }
+    .Accessories_Hero .subtitle{ margin-top: 8px; color: #f3f3f3; }
+
+    .Accessories_Section{ padding:50px 0 100px; background: var(--light-pink-color); }
+    .Accessories_Grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:24px; }
+
+    /* NEW: keep card size consistent while searching */
+    .Accessories_Grid.fixed-size{
+      grid-template-columns: repeat(auto-fill, minmax(260px, 260px));
+      justify-content: start; /* left-align the fixed columns */
+    }
+
+    .Accessory_Card{
+      background:#fff; border:1px solid #eee; border-radius:12px; overflow:hidden;
+      box-shadow:0 4px 14px rgba(0,0,0,.08);
+      display:flex; flex-direction:column; transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .Accessory_Card:hover{ transform: translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.1); }
+    .Accessory_Card img{ width:100%; aspect-ratio:4/3; object-fit:cover; }
+    .Accessory_Body{ padding:12px 14px 16px; display:flex; flex-direction:column; gap:6px; }
+    .Accessory_Name{ font-size:1.05rem; font-weight:700; color:var(--dark-color); }
+    .Accessory_Price{ font-weight:700; color:var(--primary-color); }
+    .Accessory_Desc{ color:#555; font-size:.95rem; line-height:1.5; }
+    .Accessory_Actions{ margin-top:8px; display:flex; gap:10px; }
+    .Accessory_Button{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:12px; border:1px solid #ddd; background:#fff; color:#333;
+      font-weight:700; transition: filter .2s ease;
+    }
+    .Accessory_Button.primary{
+      background: var(--Epic-Yellow-color);
+      border-color: var(--Epic-Yellow-color);
+      color: var(--primary-color);
+    }
+    .Accessory_Button:hover{ filter: brightness(.97); }
+  </style>
+
+  <!-- Google Identity Services (for Account modal) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Keep these (ORDER matters) -->
+  <script src="products.js?v=2" defer></script>
+  <script>window.DB_API_BASE = 'http://localhost/CameraWebsite_ver33_Github/api';</script>
+  <script src="db-client.js?v=5" defer></script>
+  <script src="script.js?v=2" defer></script>
+</head>
+<body>
+  <!-- ===== Header / Navigation (same structure as other pages) ===== -->
+  <header>
+    <nav class="Navigation_bar">
+      <a href="index.html" class="Navigation_Logo">
+        <img src="images/grell.webp" alt="Site Logo" width="50" height="50">
+      </a>
+
+      <div class="Navigation_Inner Section_content">
+        <ul class="Navigation_Menu">
+          <button id="Menu_Close_Button" class="fas fa-times" aria-label="Close menu"></button>
+
+          <li class="Navigation_Item Navigation_Search_Bar">
+            <form id="Navigation_Search_Form" role="search" action="#menu">
+              <input id="Navigation_Search_Input" class="Navigation_Search_Input" type="search" placeholder="Search menu..." aria-label="Search menu">
+              <button class="Navigation_Search_Button" type="submit" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+            </form>
+          </li>
+
+          <li class="Navigation_Item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="Navigation_Item"><a href="catalog.html" class="nav-link">Catalog</a></li>
+          <li class="Navigation_Item"><a href="wishlist.html" class="nav-link">Wishlist</a></li>
+          <li class="Navigation_Item"><a href="index.html#contact" class="nav-link">Support</a></li>
+          <li class="Navigation_Item"><a href="cart.html" class="nav-link">My Cart</a></li>
+          <li class="Navigation_Item"><a href="#Account" class="nav-link" id="Open_Account">Account</a></li>
+        </ul>
+
+        <button id="Menu_Open_Button" class="fas fa-bars" aria-label="Open menu"></button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="Accessories_Hero" style="--bg:url('images/Background_2.jpg')">
+      <div class="Section_content">
+        <h1 class="title">Camera Accessories</h1>
+        <p class="subtitle">Bags, batteries, mics, lights & more</p>
+      </div>
+    </section>
+
+    <!-- ===== Accessories Grid (filled from MySQL via PHP API) ===== -->
+    <section class="Accessories_Section">
+      <div class="Section_content">
+        <ul class="Accessories_Grid" id="Accessories_List">
+          <!-- Filled dynamically from `${DB_API_BASE}/accessories_list.php` -->
+          <li class="Accessory_Card" aria-hidden="true">
+            <img src="images/placeholder.jpg" alt="" />
+            <div class="Accessory_Body">
+              <h3 class="Accessory_Name">Loading…</h3>
+              <div class="Accessory_Price">&nbsp;</div>
+              <p class="Accessory_Desc">Fetching accessories from database…</p>
+              <div class="Accessory_Actions">
+                <button class="Accessory_Button primary" type="button" disabled>…</button>
+                <button class="Accessory_Button" type="button" disabled>…</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="Footer_Section">
+    <div class="Section_content">
+      <p class="copyright-text">© <span id="year"></span> GreatestCameraLover</p>
+      <ul class="Social_Link_List">
+        <li><a class="Social_Link" href="#"><i class="fab fa-facebook"></i></a></li>
+        <li><a class="Social_Link" href="#"><i class="fab fa-instagram"></i></a></li>
+        <li><a class="Social_Link" href="#"><i class="fab fa-x-twitter"></i></a></li>
+      </ul>
+      <p class="policy-text">
+        <a href="#" class="policy-link" data-policy="privacy">Privacy policy</a> ·
+        <a href="#" class="policy-link" data-policy="refund">Refund policy</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ===== Auth Modal (kept same so script.js features work) ===== -->
+  <div id="Auth_Modal" class="auth-modal" aria-hidden="true">
+    <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" aria-label="Close">&times;</button>
+      <h3 id="authTitle" class="auth-title">Welcome</h3>
+
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" data-tab="login" role="tab" aria-selected="true">Log in</button>
+        <button class="auth-tab" data-tab="signup" role="tab" aria-selected="false">Sign up</button>
+      </div>
+
+      <form id="Login_Form" class="auth-panel" data-panel="login" autocomplete="on">
+        <label class="auth-label">Username or email
+          <input class="auth-input" type="text" name="username" required />
+        </label>
+        <label class="auth-label">Password
+          <input class="auth-input" type="password" name="password" required />
+        </label>
+        <button class="auth-submit" type="submit">Log in</button>
+        <p class="auth-msg" id="loginMsg" role="alert"></p>
+      </form>
+
+      <form id="Signup_Form" class="auth-panel is-hidden" data-panel="signup" autocomplete="on">
+        <label class="auth-label">Username
+          <input class="auth-input" type="text" name="username" required />
+        </label>
+        <label class="auth-label">Password
+          <input class="auth-input" type="password" name="password" minlength="6" required />
+        </label>
+        <button class="auth-submit" type="submit">Sign up</button>
+        <p class="auth-msg" id="signupMsg" role="alert"></p>
+      </form>
+
+      <div class="auth-or"><span>or</span></div>
+
+      <div id="g_id_onload"
+        data-client_id="REPLACE_WITH_YOUR_GOOGLE_CLIENT_ID"
+        data-callback="handleCredentialResponse"
+        data-auto_prompt="false"></div>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="continue_with"
+        data-shape="rectangular"
+        data-logo_alignment="left"></div>
+    </div>
+  </div>
+
+  <!-- ===== Policy Modal (same classes used by style.css) ===== -->
+  <div id="Policy_Modal" class="policy-modal" aria-hidden="true">
+    <div class="policy-dialog" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+      <h3 id="policyTitle" class="policy-title">Policy</h3>
+      <div id="policyBody" class="policy-body"></div>
+      <button id="Policy_Close" class="policy-close" type="button" aria-label="Close policy dialog">Close</button>
+    </div>
+  </div>
+
+  <!-- Toast element -->
+  <div id="Toast" class="Toast" role="status" aria-live="polite"></div>
+
+  <!-- ===== Page scripts (MySQL fetch, cart/wishlist, policy modal, mobile menu) ===== -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    /* ---------- Mobile nav fallback (if global script fails early) ---------- */
+    (function(){
+      const openBtn  = document.getElementById('Menu_Open_Button');
+      const closeBtn = document.getElementById('Menu_Close_Button');
+      const menu     = document.querySelector('.Navigation_Menu');
+      if (!openBtn || !closeBtn || !menu) return;
+
+      openBtn.addEventListener('click', () => document.body.classList.add('show-mobile-menu'));
+      closeBtn.addEventListener('click', () => document.body.classList.remove('show-mobile-menu'));
+      document.addEventListener('click', (e) => {
+        if (document.body.classList.contains('show-mobile-menu') &&
+            !menu.contains(e.target) && !openBtn.contains(e.target)) {
+          document.body.classList.remove('show-mobile-menu');
+        }
+      }, { passive:true });
+    })();
+
+    // Year in footer
+    const y = document.getElementById('year');
+    if (y) y.textContent = new Date().getFullYear();
+
+    /* -------------------- Small toast helper -------------------- */
+    const toastEl = document.getElementById('Toast');
+    function showToast(msg){
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toastEl.classList.remove('show'), 1400);
+    }
+
+    /* -------------------- LocalStorage helpers -------------------- */
+    function num(n){ const v=Number(n); return Number.isFinite(v)?v:0; }
+    function getCart(){ try{ return JSON.parse(localStorage.getItem('cart')||'[]'); }catch{ return []; } }
+    function setCart(c){ localStorage.setItem('cart', JSON.stringify(c)); }
+    function getWL(){ try{ return JSON.parse(localStorage.getItem('wishlist')||'[]'); }catch{ return []; } }
+    function setWL(w){ localStorage.setItem('wishlist', JSON.stringify(w)); }
+
+    /* -------------------- Render helpers -------------------- */
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
+
+    function cardTpl(item){
+      const inWL = getWL().some(x => x.id === item.sku);
+      const price = Number(item.price);
+      return `
+      <li class="Accessory_Card"
+          data-id="${escapeAttr(item.sku)}"
+          data-name="${escapeAttr(item.name)}"
+          data-price="${isFinite(price)? price : 0}"
+          data-img="${escapeAttr(item.image_url || '')}"
+          data-desc="${escapeAttr(item.description || '')}">
+        <img src="${escapeAttr(item.image_url || 'images/placeholder.jpg')}" alt="${escapeAttr(item.name)}">
+        <div class="Accessory_Body">
+          <h3 class="Accessory_Name">${escapeHtml(item.name)}</h3>
+          <div class="Accessory_Price">$${isFinite(price)? price.toFixed(0) : '0'}</div>
+          <p class="Accessory_Desc">${escapeHtml(item.description || '')}</p>
+          <div class="Accessory_Actions">
+            <button class="Accessory_Button primary add-to-cart" type="button">
+              <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </button>
+            <button class="Accessory_Button add-to-wishlist" type="button">
+              ${inWL ? '<i class="fa-solid fa-heart"></i> In wishlist' : '<i class="fa-regular fa-heart"></i> Wishlist'}
+            </button>
+          </div>
+        </div>
+      </li>`;
+    }
+
+    function wireCard(card){
+      const id   = card.dataset.id;
+      const name = card.dataset.name;
+      const img  = card.dataset.img;
+      const desc = card.dataset.desc;
+      const price= Number(card.dataset.price);
+
+      const cartBtn = card.querySelector('.add-to-cart');
+      const wishBtn = card.querySelector('.add-to-wishlist');
+
+      function baseItem(){ return { id, name, img, desc, price, addedAt: Date.now(), source:'accessories' }; }
+
+      cartBtn?.addEventListener('click', ()=>{
+        const cart = getCart();
+        const found = cart.find(i => i.id === id);
+        if (found) found.qty = num(found.qty) + 1;
+        else cart.push({ ...baseItem(), qty: 1 });
+        setCart(cart);
+        showToast('Item added to cart');
+        cartBtn.disabled = true;
+        const old = cartBtn.innerHTML;
+        cartBtn.innerHTML = '<i class="fa-solid fa-check"></i> Added';
+        setTimeout(()=>{ cartBtn.disabled=false; cartBtn.innerHTML=old; }, 900);
+      });
+
+      function refreshWishBtn(){
+        const inList = getWL().some(i => i.id === id);
+        wishBtn.innerHTML = inList
+          ? '<i class="fa-solid fa-heart"></i> In wishlist'
+          : '<i class="fa-regular fa-heart"></i> Wishlist';
+      }
+
+      wishBtn?.addEventListener('click', ()=>{
+        const wl = getWL();
+        const idx = wl.findIndex(i => i.id === id);
+        if (idx === -1){ wl.push(baseItem()); showToast('Added to wishlist'); }
+        else           { wl.splice(idx,1);     showToast('Removed from wishlist'); }
+        setWL(wl);
+        refreshWishBtn();
+      });
+    }
+
+    /* -------------------- Load from MySQL via PHP API -------------------- */
+    const API_BASE = (window.DB_API_BASE || '').replace(/\/+$/,''); // e.g. http://localhost/CameraWebsite_ver33_Github/api
+    const listEl = document.getElementById('Accessories_List');
+
+    // Keep all items for filtering
+    let ALL_ITEMS = [];
+
+    function renderAccessories(arr){
+      if (!arr || !arr.length){
+        listEl.innerHTML = '<li class="Accessory_Card" style="padding:18px;text-align:center;">No results found.</li>';
+        return;
+      }
+      listEl.innerHTML = arr.map(cardTpl).join('');
+      listEl.querySelectorAll('.Accessory_Card').forEach(wireCard);
+    }
+
+    // simple normalizer
+    function nrm(s){
+      return String(s||'').toLowerCase()
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+    }
+
+    function runAccessoriesFilter(q){
+      const term = nrm(q);
+      // TOGGLE fixed-size columns while filtering
+      if (term) listEl.classList.add('fixed-size');
+      else      listEl.classList.remove('fixed-size');
+
+      if (!term){ renderAccessories(ALL_ITEMS); return; }
+      const filtered = ALL_ITEMS.filter(it => {
+        const hay = `${it.name} ${it.description||''} ${it.sku||''}`;
+        return nrm(hay).includes(term);
+      });
+      renderAccessories(filtered);
+    }
+
+    async function loadAccessories(){
+      try{
+        const res = await fetch(`${API_BASE}/accessories_list.php`, {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        if (!items.length){
+          listEl.innerHTML = '<p>No accessories available.</p>';
+          return;
+        }
+
+        ALL_ITEMS = items;
+        renderAccessories(ALL_ITEMS);
+      }catch(err){
+        console.error('Accessories API error:', err);
+        listEl.innerHTML = '<p>Failed to load accessories from database.</p>';
+      }
+    }
+    loadAccessories();
+
+    // Wire the existing nav search to filter THIS page (block global redirect)
+    const sForm  = document.getElementById('Navigation_Search_Form');
+    const sInput = document.getElementById('Navigation_Search_Input');
+    if (sForm && sInput){
+      sForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        runAccessoriesFilter(sInput.value);
+      }, true);
+      sInput.addEventListener('input', (e) => runAccessoriesFilter(e.target.value));
+    }
+
+    /* -------------------- Policy modal behavior (open only via Close) -------------------- */
+    const policyModal = document.getElementById('Policy_Modal');
+    const policyTitle = document.getElementById('policyTitle');
+    const policyBody  = document.getElementById('policyBody');
+    const policyClose = document.getElementById('Policy_Close');
+
+    const policies = {
+      privacy: {
+        title: 'Privacy Policy',
+        html: `
+          <p>We respect your privacy. This site collects only the data needed to run your account, process orders, and improve your experience.</p>
+          <h4>What we collect</h4>
+          <ul>
+            <li>Account details (name, email) you provide</li>
+            <li>Order and shipping information</li>
+            <li>Anonymous usage analytics</li>
+          </ul>
+          <h4>How we use it</h4>
+          <ul>
+            <li>To fulfill orders and provide support</li>
+            <li>To secure your account and prevent fraud</li>
+            <li>To improve catalog relevance and site performance</li>
+          </ul>
+          <p>We do not sell personal data. You may request access or deletion of your data at any time via Support.</p>
+        `
+      },
+      refund: {
+        title: 'Refund Policy',
+        html: `
+          <p>Your satisfaction matters. If an item arrives damaged or not as described, contact us within 14 days of delivery.</p>
+          <h4>Eligibility</h4>
+          <ul>
+            <li>Return in original condition with all accessories</li>
+            <li>Provide order number and photos if damaged</li>
+            <li>Non-returnable: gift cards, downloadable items, opened storage media</li>
+          </ul>
+          <h4>Process</h4>
+          <ul>
+            <li>Request an RMA via Support</li>
+            <li>Ship with tracking; once inspected, we issue a refund to your original payment method</li>
+          </ul>
+          <p>Shipping fees are non-refundable unless the return is due to our error.</p>
+        `
+      }
+    };
+
+    function openPolicy(which){
+      const data = policies[which];
+      if (!data) return;
+      policyTitle.textContent = data.title;
+      policyBody.innerHTML = data.html;
+      policyModal.classList.add('show');
+      document.body.classList.add('policy-open');
+    }
+    function closePolicy(){
+      policyModal.classList.remove('show');
+      document.body.classList.remove('policy-open');
+    }
+
+    // Open from any link with .policy-link
+    document.querySelectorAll('.policy-link').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const which = a.dataset.policy || 'privacy';
+        openPolicy(which);
+      });
+    });
+
+    // Close only via button (overlay click & Esc do not close)
+    policyClose.addEventListener('click', closePolicy);
+    policyModal.addEventListener('click', (e)=>{ e.stopPropagation(); /* no overlay close */ });
+    policyModal.addEventListener('keydown', (e)=>{ if (e.key === 'Escape'){ e.preventDefault(); }});
+  });
+  </script>
+</body>
+</html>
